@@ -1,4 +1,7 @@
 *.cod
 *.hex
 *.lst
+img.inc
+convimg/*.o
+convimg/imgconv
 

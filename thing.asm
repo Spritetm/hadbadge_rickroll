@@ -24,9 +24,6 @@ dispbuf	equ	0x600
 ;	DEMO RAM DEFINITIONS									
 ;***********************************************************
 
-dispRow
-dispCol
-
 
 	ENDC
 
@@ -61,8 +58,6 @@ inthi
 	bsf		Flag,2,access		; 150 Hz full scan handshaking flag
 no.reconstruction
 	lfsr	FSR0,Buffer			; frame buffer pointer
-	btfsc	Flag,0,access		; bit 0 set = pause
-	lfsr	FSR0,BufferPause	; pause buffer pointer
 	bcf		decoderena			; turn off andode drivers
 
 	variable xx
@@ -107,6 +102,14 @@ thingstart
 
 hang
 	bra hang
+
+
+planesel: ;15 bytes
+	db 0,3,0,1,0,2,0,1,0,0,1,0,2,0,1
+
+
+img:
+	#include "img.inc"
 
 	END
 
