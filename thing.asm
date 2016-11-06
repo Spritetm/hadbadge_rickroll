@@ -28,6 +28,8 @@ plane
 movposh
 movposl
 framectr
+noanim
+
 
 	ENDC
 
@@ -51,6 +53,17 @@ demo.ept
 
 
 inthi
+	btfss   PIR1,RCIF,access    ; is RX register empty?
+	 bra     no.rx               ; RX register is empty
+	
+	movlw	0xa5
+	cpfseq RCREG1
+	 bra no.rx
+	movlw	0
+	movwf	noanim
+
+no.rx
+
 	incf	AnodeCount,f,access	; 0...7
 ; rotates with no carry BitMask (slower than single RLNCF, but more safe)
 	rcf							; clear Carry
@@ -63,6 +76,9 @@ inthi
 	incf	plane,f,access
 	movlw	.63
 	andwf	plane,f,access
+
+	tstfsz	noanim
+	 bra no.reconstruction
 
 	incf	framectr,f,access
 	bnz		no.reconstruction
@@ -137,6 +153,9 @@ thingstart
 	bcf		RXFlag,0,access	; disable RX
 	bsf		Flag,5,access	; bit 5 set = Only two steps for key 0, without pause
 
+	movlw	1
+	movwf	noanim
+
 	movlw	low (img)
 	movwf	movposl
 	movlw	high (img)
@@ -149,6 +168,7 @@ thingstart
 	movwf	T0CON,access
 	movlw	.1				; int on  78*128t = 9984T  (1202 Hz)
 	movwf	T0period,access
+
 
 hang
 	bra hang

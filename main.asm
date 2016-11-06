@@ -26,6 +26,7 @@ dispbuf	equ	0x600
 pwmph
 pwmrelh
 pwmrell
+sendstart
 
 	ENDC
 
@@ -94,6 +95,9 @@ thingstart
 	movlw	b'00100001'
 	movwf	T3CON,access	; Timer 3 runs at 12MHz
 	
+	movlw	.6
+	movwf	sendstart
+	
 hang
 	movlw	.195
 	cpfseq	TMR3H,access
@@ -110,10 +114,24 @@ hang
 	movf	TABLAT,w,access
 	movwf	pwmrell
 
+	tstfsz sendstart,access
+	 bra dosendstart
 	bra hang
 
+dosendstart
+	movlw 0xA5
+	movwf TXREG1,access
+	
+	decf sendstart,f,access
+	
+	bra hang
 
 music:
+	db 0xff, 0xf0
+	db 0xff, 0xf0
+	db 0xff, 0xf0
+	db 0xff, 0xf0
+	db 0xff, 0xf0
 	#include "music.inc"
 
 	END
