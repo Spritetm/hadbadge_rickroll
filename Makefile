@@ -1,8 +1,13 @@
 
 TARGET=thing.hex
+TARGET2=main.hex
+
 
 $(TARGET): thing.asm img.inc
 	gpasm -w 1 thing.asm
+
+$(TARGET2): main.asm music.inc
+	gpasm -w 1 main.asm
 
 img.inc: convimg/imgconv
 	./convimg/imgconv convimg/img.png > img.inc
@@ -16,3 +21,8 @@ flash: $(TARGET)
 	sudo cp $(TARGET) /mnt
 	sudo umount /mnt
 
+
+flashmain: $(TARGET2)
+	sudo mount /dev/sdd /mnt
+	sudo cp $(TARGET2) /mnt
+	sudo umount /mnt

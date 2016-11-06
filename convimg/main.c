@@ -61,6 +61,7 @@ uint16_t pwm_table[]= {
 void lcdShowImage(char* filename) {
 	FILE *f;
 	int x, y, z, p, out[16][PLANES];
+	int r,g,b;
 	unsigned int col;
 	gdImagePtr img;
 	f=fopen(filename,"r");
@@ -77,7 +78,10 @@ void lcdShowImage(char* filename) {
 	for (y=0; y<16; y++) {
 		for (x=0; x<8; x++) {
 			p=gdImageGetPixel(img, x, y);
-			col=gdImageRed(img, p);
+			r=gdImageRed(img, p);
+			g=gdImageGreen(img, p);
+			b=gdImageBlue(img, p);
+			col=(0.2125 * r) + (0.7154 * g) + (0.0721 * b);
 			col=(65535-pwm_table[col])>>(16-PLANES);
 			for (z=0; z<PLANES; z++) {
 				out[y][z]<<=1;
