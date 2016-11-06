@@ -4,4 +4,7 @@
 img.inc
 convimg/*.o
 convimg/imgconv
+img/*.png
+mov.inc
+*.mp4
 

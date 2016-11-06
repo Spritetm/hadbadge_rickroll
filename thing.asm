@@ -24,6 +24,7 @@ dispbuf	equ	0x600
 ;	DEMO RAM DEFINITIONS									
 ;***********************************************************
 
+plane
 
 	ENDC
 
@@ -44,7 +45,6 @@ demo.ept
 	org		Offset+0x0818
 	goto	intlo
 
-start
 
 
 inthi
@@ -56,16 +56,41 @@ inthi
 	clrf	AnodeCount,access
 	bsf		BitMask,0,access	; bit reconstruction BitMask
 	bsf		Flag,2,access		; 150 Hz full scan handshaking flag
+
+	incf	plane,f,access
+	movlw	.63
+	andwf	plane,f,access
 no.reconstruction
-	lfsr	FSR0,Buffer			; frame buffer pointer
-	bcf		decoderena			; turn off andode drivers
+	;Make a reg zero
+	movlw	.0
+	movwf	GPreg, access
+	;Grab plane selector
+	movlw	low (planesel)
+	addwf	plane, w, access
+	movwf	TBLPTRL
+	movlw	high (planesel)
+	addwfc	GPreg,w,access
+	movwf	TBLPTRH
+	tblrd*
+
+	;Calculate plane address
+	movlw	low (img)
+	addwf	TABLAT,w
+	movwf	TBLPTRL
+	movlw	high (img)
+	addwfc	GPreg,w,access
+	movwf	TBLPTRH
+
+	bcf		decoderena			; turn on anode drivers
+
 
 	variable xx
 xx=0
 	while xx<.16
 		bcf		sdo,ACCESS
+		tblrd*+
 		movf	BitMask,w,ACCESS
-		andwf	POSTINC0,w
+		andwf	TABLAT,w
 		ifnz
 		bsf		sdo,ACCESS		; Transfer "BitMask" state in POSTDEC0 to "sdo" pin
 		bcf		clk,ACCESS		; ^^^\___	generate "clk" pulse
@@ -91,23 +116,33 @@ it.was.int0
 	bcf		INTCON,INT0IF,access	; reset INT0IF flag also, to avoid int retrigering
 	retfie	FAST
 
+
 intlo
+	;E_NOCLUE
+	bra hang
 
 thingstart
 	bcf		RXFlag,0,access	; disable RX
 	bsf		Flag,5,access	; bit 5 set = Only two steps for key 0, without pause
 
-	movlw 0xAA
-	movwf Buffer
+	movlw	b'11000000'		; T0 on, 8 bit, prescaler=128
+	movwf	T0CON,access
+	movlw	.1				; int on  78*128t = 9984T  (1202 Hz)
+	movwf	T0period,access
 
 hang
 	bra hang
 
 
-planesel: ;15 bytes
-	db 0,3,0,1,0,2,0,1,0,0,1,0,2,0,1
+planesel: 
+	db 0x00, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00
+	db 0x00, 0x40, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10
+	db 0x00, 0x50, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10
+	db 0x00, 0x40, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10
 
-
+;	db 0*0x10,3*16,0*16,1*16,0*16,2*16,0*16,1*16,0*16,0*16,1*16,0*16,2*16,0*16,1*16,0*16,0*16
+;	db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;	db 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
 img:
 	#include "img.inc"
 

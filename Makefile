@@ -1,10 +1,14 @@
 
 TARGET=thing.hex
 
-$(TARGET): thing.asm
-	gpasm -w 1 $^
+$(TARGET): thing.asm img.inc
+	gpasm -w 1 thing.asm
 
+img.inc: convimg/imgconv
+	./convimg/imgconv convimg/img.png > img.inc
 
+convimg/imgconv: convimg
+	make -C convimg
 
 
 flash: $(TARGET)
