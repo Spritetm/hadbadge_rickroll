@@ -83,15 +83,33 @@ thingstart
 	movlw .253
 	movwf pwmrelh
 
-;	movlw	low (music)
-;	movwf	movposl
-;	movlw	high (music)
-;	movwf	movposh
+	movlw	low (music)
+	movwf	TBLPTRL
+	movlw	high (music)
+	movwf	TBLPTRH
 
 	movlw	b'10000010'		; T0 on, 16 bit, prescaler=4
 	movwf	T0CON,access
 
+	movlw	b'00100001'
+	movwf	T3CON,access	; Timer 3 runs at 12MHz
+	
 hang
+	movlw	.195
+	cpfseq	TMR3H,access
+	  bra hang
+
+	movlw	.0
+	movwf	TMR3H,access
+	movwf	TMR3L,access
+
+	tblrd*+
+	movf	TABLAT,w,access
+	movwf	pwmrelh
+	tblrd*+
+	movf	TABLAT,w,access
+	movwf	pwmrell
+
 	bra hang
 
 
