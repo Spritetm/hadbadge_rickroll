@@ -25,6 +25,9 @@ dispbuf	equ	0x600
 ;***********************************************************
 
 plane
+movposh
+movposl
+framectr
 
 	ENDC
 
@@ -60,6 +63,15 @@ inthi
 	incf	plane,f,access
 	movlw	.63
 	andwf	plane,f,access
+
+	incf	framectr,f,access
+	bnz		no.reconstruction
+
+	movlw	0x60
+	addwf	movposl,f,access
+	movlw	.0
+	addwfc	movposh,f,access
+
 no.reconstruction
 	;Make a reg zero
 	movlw	.0
@@ -74,10 +86,10 @@ no.reconstruction
 	tblrd*
 
 	;Calculate plane address
-	movlw	low (img)
+	movf	movposl,w,access
 	addwf	TABLAT,w
 	movwf	TBLPTRL
-	movlw	high (img)
+	movf	movposh,w,access
 	addwfc	GPreg,w,access
 	movwf	TBLPTRH
 
@@ -125,6 +137,14 @@ thingstart
 	bcf		RXFlag,0,access	; disable RX
 	bsf		Flag,5,access	; bit 5 set = Only two steps for key 0, without pause
 
+	movlw	low (img)
+	movwf	movposl
+	movlw	high (img)
+	movwf	movposh
+
+	movlw	.0
+	movwf	framectr
+
 	movlw	b'11000000'		; T0 on, 8 bit, prescaler=128
 	movwf	T0CON,access
 	movlw	.1				; int on  78*128t = 9984T  (1202 Hz)
@@ -140,11 +160,8 @@ planesel:
 	db 0x00, 0x50, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10
 	db 0x00, 0x40, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10, 0x00, 0x30, 0x00, 0x10, 0x00, 0x20, 0x00, 0x10
 
-;	db 0*0x10,3*16,0*16,1*16,0*16,2*16,0*16,1*16,0*16,0*16,1*16,0*16,2*16,0*16,1*16,0*16,0*16
-;	db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;	db 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
 img:
-	#include "img.inc"
+	#include "mov.inc"
 
 	END
 
