@@ -1,5 +1,6 @@
+#!/bin/bash
 rm *.png
-mplayer  ../Rick\ Astley\ -\ Never\ Gonna\ Give\ You\ Up-dQw4w9WgXcQ.mp4 -noaspect -vf crop=920:700:180:10,scale=240:160 -vo png -ao null  -frames $((200*2))
+mplayer "$1" -noaspect -vf crop=920:700:180:10,scale=240:160 -vo png -ao null  -frames $((200*2))
 rm *[13579].png
 for x in *.png; do
 	convert -resize 24x16 $x sc-$x
