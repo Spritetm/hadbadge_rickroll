@@ -7,4 +7,6 @@ convimg/imgconv
 img/*.png
 mov.inc
 *.mp4
+music/*.o
+music/music
 

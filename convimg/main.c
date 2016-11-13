@@ -58,7 +58,7 @@ uint16_t pwm_table[]= {
      4543,    3908,    3267,    2623,    1974,    1320,    662,    0};
 
 //Show the png-file called filename on the LCD
-void lcdShowImage(char* filename) {
+void lcdShowImage(char* filename, int no) {
 	FILE *f;
 	int x, y, z, p, out[16][PLANES];
 	int r,g,b;
@@ -77,7 +77,7 @@ void lcdShowImage(char* filename) {
 	}
 	for (y=0; y<16; y++) {
 		for (x=0; x<8; x++) {
-			p=gdImageGetPixel(img, x, y);
+			p=gdImageGetPixel(img, x+no*8, y);
 			r=gdImageRed(img, p);
 			g=gdImageGreen(img, p);
 			b=gdImageBlue(img, p);
@@ -101,7 +101,7 @@ void lcdShowImage(char* filename) {
 //Main function
 int main(int argc, char **argv) {
 	int x;
-	for (x=1; x<argc; x++) {
-		lcdShowImage(argv[x]);
+	for (x=2; x<argc; x++) {
+		lcdShowImage(argv[x], atoi(argv[1]));
 	}
 }

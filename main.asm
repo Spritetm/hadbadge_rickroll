@@ -78,6 +78,11 @@ intlo
 	bra hang
 
 thingstart
+	bcf		INTCON,TMR0IE,access
+
+	btfsc PORTB,2
+	 bra thingstart
+	bsf		INTCON,TMR0IE,access
 
 	movlw 0
 	movwf pwmrell

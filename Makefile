@@ -3,7 +3,7 @@ TARGET=thing.hex
 TARGET2=main.hex
 
 
-$(TARGET): thing.asm img.inc
+$(TARGET): thing.asm mov.inc
 	gpasm -w 1 thing.asm
 
 $(TARGET2): main.asm music.inc
@@ -25,4 +25,9 @@ flash: $(TARGET)
 flashmain: $(TARGET2)
 	sudo mount /dev/sdd /mnt
 	sudo cp $(TARGET2) /mnt
+	sudo umount /mnt
+
+orig: demo2.hex
+	sudo mount /dev/sdd /mnt
+	sudo cp demo2.hex /mnt
 	sudo umount /mnt
