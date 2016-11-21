@@ -1,7 +1,9 @@
+This is the firmware to make 4 Hackaday badges (from the Supercon 2016) do a rickroll. One badge
+plays audio, the other three play the left, middle and right part of the video.
 
 Steps in reproducing the firmware:
 
-You need gpadm, mplayer/mplayer2, imagemagick and the gcc toolchain for your host. Install these.
+You need gpasm, mplayer/mplayer2, imagemagick and the gcc toolchain for your host. Install these.
 
 The music badge also needs a buzzer or speaker connected between B3 and B5.
 
