@@ -1,6 +1,10 @@
 This is the firmware to make 4 Hackaday badges (from the Supercon 2016) do a rickroll. One badge
 plays audio, the other three play the left, middle and right part of the video.
 
+The three badges use a grayscale driver for the display to play a preprocessed video. The music
+badge plays a song from the Monotone tracker (https://github.com/MobyGamer/MONOTONE) pre-processed
+for minimal processing on the badge.
+
 Steps in reproducing the firmware:
 
 You need gpasm, mplayer/mplayer2, imagemagick and the gcc toolchain for your host. Install these.

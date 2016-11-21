@@ -1,5 +1,11 @@
 ;Firmware for the three video player badges.
 
+;THE BEER-WARE LICENSE" (Revision 42): Sprite_tm <jeroen@spritesmods.com> wrote most of this file. As long as 
+;you retain this notice you can do whatever you want with this stuff. If we meet some day, and you think 
+;this stuff is worth it, you can buy me a beer in return
+
+;Modified from the original badge code by Voja Antonic
+
 	LIST P=18LF25K50
 	#include <p18lf25k50.inc>
 	#include <macros 2.inc>
